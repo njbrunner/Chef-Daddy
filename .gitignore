@@ -1,0 +1,20 @@
+venv_chef/
+
+*.pyc
+__pycache__/
+
+instance/
+
+.coverage
+htmlcov/
+
+dist/
+build/
+
+# Python deployment artifacts
+.pytest_cache/
+*.egg-info/
+
+# Visual Studio Code's project specific configuration
+.vscode/
+*.code-workspace
