@@ -1,6 +1,6 @@
 """This file contains all the endpoints to handle user authentication"""
 from flask import Blueprint, request
-from app.utilities import auth_utilities, response_utilities
+from app.utilities import auth_utilities
 
 AUTH_BP = Blueprint('auth_bp', __name__, url_prefix='/auth')
 

@@ -20,7 +20,7 @@ class User(Document):
 
 
     def validate_password(self, user_provided_password):
-        """ 
+        """
         Checks the validity of the user provided password
 
         Parameters:
