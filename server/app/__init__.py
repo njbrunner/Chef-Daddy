@@ -3,11 +3,15 @@ from flask import Flask
 from flask_pymongo import PyMongo
 import mongoengine
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 
 # CREATE app
 APP = Flask(__name__)
 APP.config.from_object('config')
-APP.config.from_pyfile(filename='..\\instance\\config.py')
+APP.config.from_pyfile(filename='../instance/config.py')
+
+# CORS
+CORS(APP)
 
 # Create token manager
 JWT = JWTManager(APP)

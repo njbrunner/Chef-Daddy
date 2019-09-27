@@ -4,8 +4,7 @@ from flask import make_response
 
 
 def invalid_request(message):
-    """
-    This function creates an invalid request with provided message
+    """Creates an invalid request with provided message
 
     Parameters:
         message: Explains why the request was invalid
@@ -13,43 +12,58 @@ def invalid_request(message):
     Returns:
         response object with status and message
     """
-    return make_response(
-        {'Status': 'Fail',
-         'Message': 'Invalid Request: {}'.format(message)
-        }), HTTPStatus.BAD_REQUEST
+    return make_response({
+        'Status': 'Fail',
+        'Message': f'Invalid Request: {message}'
+    }), HTTPStatus.BAD_REQUEST
 
 
-def created_object_successfully(message, data=None):
-    """
-    Creates a successful creation response with provided message
+def created_object_successfully(object_type, data=None):
+    """Creates a successful creation response with provided message
 
     Parameters:
-        message: Confirms what was created
+        object_type: the object type that was created
         data (optional): any data that should be returned to the user
 
     Returns:
         response object with status, message, and data
     """
-    return make_response(
-        {'Status': 'Success',
-         'Message': message,
-         'Data': data
-        }), HTTPStatus.CREATED
+    return make_response({
+        'Status': 'Success',
+        'Message': f'Successfully created {object_type}',
+        'Data': data
+    }), HTTPStatus.CREATED
 
 
-def fetched_data_successfully(message, data):
-    """
-    Creates a successful response with provided message and data
+def fetched_data_successfully(object_type, data):
+    """Creates a successful response with provided message and data
 
     Parameters:
-        message: Confirms data fetch was successful
+        object_type: the object type that was fetched
         data: data that will be returned to the user
 
     Returns:
         respone object with status, message, and data
     """
-    return make_response(
-        {'Status': 'Success',
-         'Message': message,
-         'Data': data
-        })
+    return make_response({
+        'Status': 'Success',
+        'Message': f'Successfully fetched {object_type}',
+        'Data': data
+    })
+
+
+def authenticated_user_successfully(user_email, token):
+    """Creates a successful respone with authentication token
+
+    Parameters:
+        user_email: email of the user that was authenticated
+        token: authentication token to be returned to the client
+
+    Returns:
+        response object with status, message, and token
+    """
+    return make_response({
+        'Status': 'Success',
+        'Message': f'Successfully authenticated user: {user_email}',
+        'Data': {'chef_token': token}
+    })

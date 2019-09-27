@@ -1,59 +1,69 @@
 """This file provides functions for handeling recipe interactions"""
 from mongoengine import DoesNotExist
-from app.utilities import response_utilities, ingredient_utilities
+from flask import current_app
+from app.utilities import response_utilities
 from app.models.recipe import Recipe
-from app.models.ingredient import Ingredient
 
 
 def create_new_recipe(recipe_data):
-    """
-    Creates a new recipe in the database.
+    """Creates a new recipe in the database.
 
     Parameters:
         recipe_data: the data needed to create a new recipe
 
     Returns:
-        Status of recipe creation
+        Response object with status of recipe creation
     """
-    ingredients = list()
-    for ingredient in recipe_data['ingredients']:
-        try:
-            existing_ingredient = Ingredient.objects.get(name=ingredient['name'])
-            ingredients.append(existing_ingredient)
-        except DoesNotExist:
-            new_ingredient = ingredient_utilities.create_new_ingredient(ingredient)
-            ingredients.append(new_ingredient)
+    try:
+        new_recipe = Recipe(
+            ingredients=recipe_data['ingredients'],
+            description=recipe_data['description'],
+            name=recipe_data['name']
+        )
+        new_recipe.save()
+        return response_utilities.created_object_successfully('recipe', data=new_recipe.to_mongo())
 
-    new_recipe = Recipe(
-        ingredients=ingredients,
-        name=recipe_data['name']
-    )
-    new_recipe.save()
-
-    return new_recipe
-            
+    except Exception:
+        return response_utilities.invalid_request('unable to create recipe')
 
 
-def validate_request(request, required_parameters):
-    """
-    Validates recipe request.
-
-    Parameters:
-        request: the forwarded http request
-        required_parameters: list of parameters to validate
+def get_recipies():
+    """Retrieves recipe data from the database
 
     Returns:
-        JSON object containing boolean value associated with validity and response if failed
+        Response object with recipe data
     """
-    if not request.json:
-        return {'valid': False,
-                'response': response_utilities.invalid_request('Request not JSON')}
+    try:
+        recipies = Recipe.objects
+        recipe_dicts = list()
+        for recipe in recipies:
+            recipe_dict = recipe.to_mongo()
+            recipe_dict['_id'] = str(recipe_dict['_id'])
+            recipe_dicts.append(recipe_dict)
+        current_app.logger.info(recipe_dicts)
 
-    for parameter in required_parameters:
-        if parameter not in request.json:
-            return {'valid': False,
-                    'response': response_utilities.invalid_request(
-                        '{} missing from request'.format(parameter))
-                    }
+        return response_utilities.fetched_data_successfully('recipies', recipe_dicts)
 
-    return {'valid': True}
+    except Exception:
+        return response_utilities.invalid_request('unable to fetch recipies')
+
+
+# def validate_request(data, required_parameters):
+#     """
+#     Validates recipe request.
+
+#     Parameters:
+#         request: the forwarded http request
+#         required_parameters: list of parameters to validate
+
+#     Returns:
+#         JSON object containing boolean value associated with validity and response if failed
+#     """
+#     for parameter in required_parameters:
+#         if parameter not in data:
+#             return {'valid': False,
+#                     'response': response_utilities.invalid_request(
+#                         f'{parameter} missing from request'
+#                     )}
+
+#     return {'valid': True}

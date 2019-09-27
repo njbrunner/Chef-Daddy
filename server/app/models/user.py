@@ -1,11 +1,11 @@
 """This file defines the model for a user"""
 from datetime import datetime
 from werkzeug.security import check_password_hash
-from mongoengine import fields, Document
+from mongoengine import fields, Document, DoesNotExist
+
 
 class User(Document):
-    """
-    Defines a user model for the database
+    """Defines a user model for the database
 
     Attributes:
         email: The unique email used to register the user
@@ -18,10 +18,8 @@ class User(Document):
     date_registered = fields.DateField(default=datetime.now().strftime("%Y-%m-%d"))
     email_verified = fields.BooleanField(default=False)
 
-
-    def validate_password(self, user_provided_password):
-        """
-        Checks the validity of the user provided password
+    def check_user_provided_password(self, user_provided_password) -> bool:
+        """Checks the validity of the user provided password
 
         Parameters:
             user_provided_password: password entered by the user

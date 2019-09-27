@@ -1,16 +1,30 @@
 """This file contains endpoints to handle recipe interactions."""
-from flask import Blueprint, request
+import sys
+from flask import Blueprint, request, current_app
 from flask_jwt_extended import jwt_required
 from app.utilities import recipe_utilities, response_utilities
 
 RECIPE_BP = Blueprint('recipe_bp', __name__, url_prefix='/recipe')
 
 
-@RECIPE_BP.route('/new', methods=["POST"])
-@jwt_required
-def create_new_recipe():
+@RECIPE_BP.route('/', methods=["GET"])
+# @jwt_required
+def get_recipies():
+    """Handles returning recipe information
+
+    Parameters:
+        http request
+
+    Returns:
+        recipe data
     """
-    Handles new recipe creation.
+    return recipe_utilities.get_recipies()
+
+
+@RECIPE_BP.route('/', methods=["POST"])
+# @jwt_required
+def create_new_recipe():
+    """Handles new recipe creation.
 
     Parameters:
         http request
@@ -19,13 +33,9 @@ def create_new_recipe():
         status of recipe creation
     """
 
-    valid_response = recipe_utilities.validate_request(request, ['ingredients', 'name', 'steps'])
-
-    if not valid_response['valid']:
-        return valid_response['response']
-
-    recipe = recipe_utilities.create_new_recipe(request.json)
-    return response_utilities.created_object_successfully(
-        message='Created new recipe: {}'.format(recipe.name),
-        data=recipe.to_mongo()
-    )
+    recipe_data = {
+        'name': request.json.get('name'),
+        'description': request.json.get('description'),
+        'ingredients': request.json.get('ingredients')
+    }
+    return recipe_utilities.create_new_recipe(recipe_data)
