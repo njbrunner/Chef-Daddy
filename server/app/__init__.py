@@ -5,22 +5,67 @@ import mongoengine
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 
-# CREATE app
-APP = Flask(__name__)
-APP.config.from_object('config')
-APP.config.from_pyfile(filename='../instance/config.py')
 
-# CORS
-CORS(APP)
+class BaseConfig(object):
+    DEBUG = False
+    TESTING = False
 
-# Create token manager
-JWT = JWTManager(APP)
+    # Database
+    MONGO_URI = 'mongodb://localhost:27017/'
 
-# CREATE database
-MONGO = PyMongo(APP)
-mongoengine.connect(db=APP.config['DB_NAME'])
+    # Authentication
+    JWT_SECRET_KEY = "enter_secret_here"
 
-from app.routes import auth_routes
-APP.register_blueprint(auth_routes.AUTH_BP)
-from app.routes import recipe_routes
-APP.register_blueprint(recipe_routes.RECIPE_BP)
+
+class DevelopmentConfig(BaseConfig):
+    DEBUG = True
+    TESTING = True
+
+    # Database
+    DB_NAME = "chef"
+    MONGO_URI = f'{BaseConfig.MONGO_URI}{DB_NAME}'
+
+
+class TestingConfig(BaseConfig):
+    DEBUG = False
+    TESTING = True
+
+    # Database
+    DB_NAME = "test"
+    MONGO_URI = f'{BaseConfig.MONGO_URI}{DB_NAME}'
+
+
+def create_app(testing=False):
+
+    # CREATE app
+    app = Flask(__name__)
+    app.config.from_object('config')
+
+    if not testing:
+        app.config.from_object(DevelopmentConfig)
+    else:
+        app.config.from_object(TestingConfig)
+
+    # CORS
+    CORS(app)
+
+    # Create token manager
+    JWT = JWTManager(app)
+
+    initialize_extensions(app)
+
+    register_blueprints(app)
+
+    return app
+
+def initialize_extensions(app):
+    mongo = PyMongo(app)
+    db = app.config['DB_NAME']
+    mongoengine.connect(db=db)
+
+def register_blueprints(app):
+    from app.routes import auth_routes
+    from app.routes import recipe_routes
+
+    app.register_blueprint(auth_routes.AUTH_BP)
+    app.register_blueprint(recipe_routes.RECIPE_BP)

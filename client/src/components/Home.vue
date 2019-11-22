@@ -28,7 +28,7 @@ export default {
     created() {
         this.$store.dispatch('fetchRecipies')
         .then(response => {
-            this.recipies = response.data['Data']
+            this.recipies = response.data['Data'];
         })
         .catch(error => {
             console.log(error.response.data)

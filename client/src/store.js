@@ -34,7 +34,7 @@ export default new Vuex.Store({
         login({commit}, data) {
             return new Promise((resolve, reject) => {
                 commit('auth_request')
-                axios({url: 'http://localhost:5000/auth/login', data: data, method: 'POST'})
+                axios({url: 'http://127.0.0.1:5000/auth/login', data: data, method: 'POST'})
                 .then(response => {
                     const chef_token = response.data.Data.chef_token
                     localStorage.setItem('chef_token', chef_token)
@@ -52,7 +52,7 @@ export default new Vuex.Store({
         register({commit}, data) {
             return new Promise((resolve, reject) => {
                 commit('auth_request')
-                axios({url: 'http://localhost:5000/auth/register', data: data, method: 'POST'})
+                axios({url: 'http://127.0.0.1:5000/auth/register', data: data, method: 'POST'})
                 .then(response => {
                     // const chef_token = response.data.Data.chef_token
                     // localStorage.setItem('chef_token', chef_token)
@@ -77,7 +77,7 @@ export default new Vuex.Store({
         },
         fetchRecipies({commit}) {
             return new Promise((resolve, reject) => {
-                axios({url: 'http://localhost:5000/recipe/', method: 'GET'})
+                axios({url: 'http://127.0.0.1:5000/recipe/', method: 'GET'})
                 .then(response => {
                     commit('SET_RECIPIES', response.data['Data'])
                     resolve(response)
@@ -87,7 +87,7 @@ export default new Vuex.Store({
         createRecipe({commit}, data) {
             return new Promise((resolve, reject) => {
                 console.log(data)
-                axios({url: 'http://localhost:5000/recipe/', data: data, method: 'POST'})
+                axios({url: 'http://127.0.0.1:5000/recipe/', data: data, method: 'POST'})
                 .then(response => {
                     resolve(response)
                 })

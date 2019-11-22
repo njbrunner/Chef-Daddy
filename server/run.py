@@ -1,7 +1,9 @@
 """
     This file is used to run the application in a development setting
 """
-from app import APP
+from app import create_app
+
+app = create_app()
 
 if __name__ == "__main__":
-    APP.run(debug=APP.config["DEBUG"], port=5000)
+    app.run()

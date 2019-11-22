@@ -5,47 +5,39 @@ from app.utilities import response_utilities
 from app.models.recipe import Recipe
 
 
-def create_new_recipe(recipe_data):
+def create_new_recipe(recipe_data: dict) -> dict:
     """Creates a new recipe in the database.
 
     Parameters:
         recipe_data: the data needed to create a new recipe
 
     Returns:
-        Response object with status of recipe creation
+        Dictionary corresponding to created recipe
     """
-    try:
-        new_recipe = Recipe(
-            ingredients=recipe_data['ingredients'],
-            description=recipe_data['description'],
-            name=recipe_data['name']
-        )
-        new_recipe.save()
-        return response_utilities.created_object_successfully('recipe', data=new_recipe.to_mongo())
-
-    except Exception:
-        return response_utilities.invalid_request('unable to create recipe')
+    new_recipe = Recipe(
+        ingredients=recipe_data['ingredients'],
+        description=recipe_data['description'],
+        name=recipe_data['name']
+    )
+    new_recipe.save()
+    return new_recipe.to_json()
 
 
-def get_recipies():
+def get_recipies() -> list:
     """Retrieves recipe data from the database
 
     Returns:
-        Response object with recipe data
+        List of dictionaries for all the recipies
     """
-    try:
-        recipies = Recipe.objects
-        recipe_dicts = list()
-        for recipe in recipies:
-            recipe_dict = recipe.to_mongo()
-            recipe_dict['_id'] = str(recipe_dict['_id'])
-            recipe_dicts.append(recipe_dict)
-        current_app.logger.info(recipe_dicts)
+    recipies = Recipe.objects
+    recipe_dicts = list()
+    for recipe in recipies:
+        recipe_dict = recipe.to_mongo()
+        recipe_dict['_id'] = str(recipe_dict['_id'])
+        recipe_dicts.append(recipe_dict)
+    current_app.logger.info(recipe_dicts)
 
-        return response_utilities.fetched_data_successfully('recipies', recipe_dicts)
-
-    except Exception:
-        return response_utilities.invalid_request('unable to fetch recipies')
+    return recipe_dicts
 
 
 # def validate_request(data, required_parameters):

@@ -18,11 +18,11 @@ export default {
         login(data) {
             this.$store.dispatch('login', data)
             .then(response => {
-                console.log(response.data)
-                this.$router.push({name: 'Home'})
+                console.log(response.data['Message']);
+                this.$router.push({name: 'Home'});
             })
             .catch(error => {
-                console.log(error.response.data)
+                console.log(error);
             })
         }
     }

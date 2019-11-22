@@ -1,6 +1,5 @@
 """This file contains endpoints to handle recipe interactions."""
-import sys
-from flask import Blueprint, request, current_app
+from flask import Blueprint, request
 from flask_jwt_extended import jwt_required
 from app.utilities import recipe_utilities, response_utilities
 
@@ -16,9 +15,13 @@ def get_recipies():
         http request
 
     Returns:
-        recipe data
+        Response object with list of recipies
     """
-    return recipe_utilities.get_recipies()
+    try:
+        recipies = recipe_utilities.get_recipies()
+        return response_utilities.fetched_data_successfully("recipies", recipies)
+    except Exception as e:
+        return response_utilities.invalid_request('unable to fetch recipies')
 
 
 @RECIPE_BP.route('/', methods=["POST"])
@@ -30,12 +33,10 @@ def create_new_recipe():
         http request
 
     Returns:
-        status of recipe creation
+        Response object with created recipe
     """
-
-    recipe_data = {
-        'name': request.json.get('name'),
-        'description': request.json.get('description'),
-        'ingredients': request.json.get('ingredients')
-    }
-    return recipe_utilities.create_new_recipe(recipe_data)
+    try:
+        recipe = recipe_utilities.create_new_recipe(request.json)
+        return response_utilities.created_object_successfully("recipe", recipe)
+    except Exception as e:
+        return response_utilities.invalid_request('unable to create recipe')

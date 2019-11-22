@@ -4,7 +4,8 @@
         <div class="form-group">
             <input type="text" class="form-control" placeholder="Name" v-model="name">
             <br>
-            <textarea class="form-control" placeholder="Description" v-model=summary></textarea>
+            <input type="file" accept="image/*" class="image-upload" @change="uploadImage($event)">
+            <textarea class="form-control" placeholder="Description" v-model=description></textarea>
         </div>
         <div class="ingredient-form">
             <h5><b>Ingredients</b></h5>
@@ -36,7 +37,7 @@ export default {
     data() {
         return {
             'name': null,
-            'summary': null,
+            'description': null,
             'ingredients': [],
         }
     },
@@ -45,23 +46,26 @@ export default {
             this.ingredients.push(ingredientData)
         },
         removeIngredient(index) {
-            console.log('test')
             this.ingredients.splice(index, 1);
         },
         submitRecipe() {
             var data = {
                 name: this.name,
-                summary: this.summary,
+                description: this.description,
                 ingredients: this.ingredients
             }
             this.$store.dispatch('createRecipe', data)
             .then(response => {
-                console.log(response)
+                this.$toasted.show(response.data['Message'], {type: 'success'})
                 this.$router.push({name: 'Home'})
             })
             .catch(error => {
-                console.log(error)
+                console.log(error.response.data['Message'])
+                this.$toasted.show(error.response.data['Message'], {type: 'error'})
             })
+        },
+        uploadImage(event) {
+            console.log("Image upload");
         }
     },
     computed: {
@@ -79,5 +83,9 @@ table {
 
 .ingredient-form {
     margin-top: 32px;
+}
+
+.image-upload {
+    background: transparent;
 }
 </style>

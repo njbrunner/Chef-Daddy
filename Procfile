@@ -1,0 +1,1 @@
+api: gunicorn --chdir server/ run:app
