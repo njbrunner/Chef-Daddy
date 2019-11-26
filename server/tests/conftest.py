@@ -1,5 +1,4 @@
 import pytest
-import tempfile
 from app import create_app
 
 @pytest.fixture

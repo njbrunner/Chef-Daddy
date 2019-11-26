@@ -2,6 +2,7 @@ import pytest
 import json
 from pymongo import MongoClient
 from http import HTTPStatus
+
 """ Tests for the Recipe routes, utilities, and model """
 
 @pytest.fixture(name="valid_recipe")
@@ -18,7 +19,7 @@ def fixture_valid_recipe():
 
 def teardown():
     mongo_client = MongoClient('mongodb://localhost:27017')
-    mongo_client.drop_database('test')
+    mongo_client.drop_database('fork_test')
 
 
 def test_create_recipe_success(test_client, valid_recipe):
